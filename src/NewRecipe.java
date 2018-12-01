@@ -6,6 +6,7 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -117,12 +118,15 @@ public class NewRecipe extends JFrame implements ActionListener {
         String button = e.getActionCommand();
         if (button.equals("Add")) {
             addIngredientToList();
-            System.out.println("Test");
         } else if (button.equals("Exit")) {
             dispose();
         } else if (button.equals("Save")) {
           boolean i = saveActions();
-          System.out.println(i);
+          if (i) {
+            JOptionPane.showMessageDialog(this, "Recipe has been saved.");
+          } else {
+            JOptionPane.showMessageDialog(this, "Recipe could not be saved.");
+          }
         }
     }
 
@@ -130,10 +134,8 @@ public class NewRecipe extends JFrame implements ActionListener {
       try {
         ArrayList<String> input = getAndPackageInput();
         for (String s : input) {
-          System.out.println(s);
         }
         String s = setWorkingDirectory();
-        System.out.println(s);
         String path = s + "/" + input.get(0);
         SaveRecipe saveNewRecipe = new SaveRecipe(path, input);
         saveNewRecipe.save();
