@@ -5,11 +5,15 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.io.File;
+import javax.swing.filechooser.FileSystemView;
+
 
 
 public class NewRecipe extends JFrame implements ActionListener {
@@ -116,7 +120,54 @@ public class NewRecipe extends JFrame implements ActionListener {
             System.out.println("Test");
         } else if (button.equals("Exit")) {
             dispose();
+        } else if (button.equals("Save")) {
+          boolean i = saveActions();
+          System.out.println(i);
         }
+    }
+
+    private boolean saveActions () {
+      try {
+        ArrayList<String> input = getAndPackageInput();
+        for (String s : input) {
+          System.out.println(s);
+        }
+        String s = setWorkingDirectory();
+        System.out.println(s);
+        String path = s + "/" + input.get(0);
+        SaveRecipe saveNewRecipe = new SaveRecipe(path, input);
+        saveNewRecipe.save();
+        return true;
+      } catch (Exception e) {
+        return false;
+      }
+    }
+
+    private ArrayList<String> getAndPackageInput () {
+      ArrayList<String> input = new ArrayList<>();
+      input.add(recipeName.getText());
+      input.add(prepTime.getText());
+      input.add(servingSize.getText());
+      input.add(FileDividers.ingredientDivider);
+      for (int i = 0; i < ingredientsList.size(); i++) {
+        input.add(ingredientQuantity.get(i).getText());
+        input.add(ingredientsList.get(i).getText());
+      }
+      input.add(FileDividers.instructionsDivider);
+      input.add(instructions.getText());
+      return input;
+    }
+
+    private String setWorkingDirectory () {
+      JFileChooser userSetWorkingDir = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+      userSetWorkingDir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+      int r = userSetWorkingDir.showOpenDialog(null);
+      if (r == JFileChooser.APPROVE_OPTION) {
+        return userSetWorkingDir.getSelectedFile().getAbsolutePath();
+      }
+      else {
+        return null;
+      }
     }
 
 }
